@@ -8,7 +8,6 @@ import Login from "./pages/Login";
 import Register from "./pages/register";
 import NoPage from "../src/pages/NoPage";
 import Home from './pages/home';
-import { ReactSession } from "react-client-session";
 
 function App() {
 

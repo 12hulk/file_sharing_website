@@ -2,21 +2,28 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Upload from '../components/uploadForm';
 import Footer from '../components/footer';
-import { ReactSession } from "react-client-session";
+import Session from 'react-session-api'; // Importing react-session-api
 
 const Home = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (ReactSession.get("isAuthenticated") !== "yes") {
+        // Check if the user is authenticated using react-session-api
+        if (Session.get("isAuthenticated") !== "yes") {
+            // If not authenticated, redirect to login page
             navigate('/login');
         }
-    }, [navigate]); // Only runs when `navigate` changes
+    }, [navigate]); // Dependency array includes navigate
 
     function handleLogout() {
-        console.log(ReactSession.get("isAuthenticated"));
-        ReactSession.set("isAuthenticated", "no");
-        navigate('/Login');
+        // Log the current authentication status for debugging
+        console.log("Logging out", Session.get("isAuthenticated"));
+
+        // Set session to "no" to mark the user as logged out
+        Session.set("isAuthenticated", "no");
+
+        // Redirect to login page after logging out
+        navigate('/login');
     }
 
     return (
@@ -32,6 +39,7 @@ const Home = () => {
             }}
         >
             <h2 style={{ color: '#4e54c8', margin: '20px 0' }}>Share Your Files</h2>
+
             <button
                 onClick={handleLogout}
                 style={{
@@ -48,6 +56,7 @@ const Home = () => {
             >
                 Logout
             </button>
+
             <Upload />
             <Footer />
         </div>

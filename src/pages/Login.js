@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ReactSession } from "react-client-session";
-
-
+import Session from 'react-session-api'; // Importing react-session-api
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -21,9 +19,13 @@ const Login = () => {
 
             if (response.status === 200 && response.data.token === "yes") {
                 console.log('Login successful:', response.data);
-                ReactSession.setStoreType("localStorage");
-                ReactSession.set("isAuthenticated", response.data.token);
-                console.log(ReactSession.get("isAuthenticated"));
+
+                // Set session storage with react-session-api
+                Session.set("isAuthenticated", response.data.token);
+
+                console.log(Session.get("isAuthenticated"));
+
+                // Redirect to home page after successful login
                 navigate('/home');
             }
         } catch (err) {
