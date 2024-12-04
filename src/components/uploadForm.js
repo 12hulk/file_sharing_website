@@ -36,14 +36,14 @@ const Upload = () => {
         setIsUploading(true);
 
         try {
-            await axios.post("http://localhost:5000/upload", formData, {
+            await axios.post("https://backend-rust-theta-51.vercel.app/api/upload.js", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             setMessage("File uploaded successfully!");
             setFile(null);
 
             // Refresh file list
-            const fileListResponse = await axios.get("http://localhost:5000/files");
+            const fileListResponse = await axios.get("https://backend-rust-theta-51.vercel.app/api/files.js");
             setUploadedFiles(fileListResponse.data);
         } catch (error) {
             setMessage("File upload failed.");
