@@ -1,25 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 
 const Upload = () => {
     const [file, setFile] = useState(null);
     const [message, setMessage] = useState("");
-    const [uploadedFiles, setUploadedFiles] = useState([]);
     const [isUploading, setIsUploading] = useState(false);
-
-    useEffect(() => {
-        const fetchFiles = async () => {
-            try {
-                const response = await axios.get("https://backend-rust-theta-51.vercel.app/api/files.js");
-                const files = Array.isArray(response.data) ? response.data : []; // Ensure the data is an array
-                setUploadedFiles(files);
-            } catch (error) {
-                setMessage("Failed to load file list.");
-                console.error(error);
-            }
-        };
-        fetchFiles();
-    }, []);
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
@@ -37,40 +22,26 @@ const Upload = () => {
         setIsUploading(true);
 
         try {
-            await axios.post("https://backend-rust-theta-51.vercel.app/api/upload.js", formData, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
-            setMessage("File uploaded successfully!");
-            setFile(null);
+            // Make sure this endpoint handles storing the file in your database
+            const response = await axios.post(
+                "https://backend-rust-theta-51.vercel.app/api/upload.js", // Update with your correct API endpoint
+                formData,
+                {
+                    headers: { "Content-Type": "multipart/form-data" },
+                }
+            );
 
-            // Refresh file list
-            const fileListResponse = await axios.get("https://backend-rust-theta-51.vercel.app/api/files.js");
-            const files = Array.isArray(fileListResponse.data) ? fileListResponse.data : [];
-            setUploadedFiles(files);
+            if (response.data.success) {
+                setMessage("File uploaded successfully!");
+            } else {
+                setMessage("File upload failed. Please try again.");
+            }
+            setFile(null);
         } catch (error) {
             setMessage("File upload failed.");
             console.error(error);
         } finally {
             setIsUploading(false);
-        }
-    };
-
-    const handleDelete = async (filename) => {
-        if (!window.confirm(`Are you sure you want to delete '${filename}'?`)) {
-            return;
-        }
-
-        try {
-            await axios.delete(`http://localhost:5000/files/${filename}`);
-            setMessage(`File '${filename}' deleted successfully!`);
-
-            // Refresh file list
-            const fileListResponse = await axios.get("http://localhost:5000/files");
-            const files = Array.isArray(fileListResponse.data) ? fileListResponse.data : [];
-            setUploadedFiles(files);
-        } catch (error) {
-            setMessage("Failed to delete the file.");
-            console.error(error);
         }
     };
 
@@ -120,64 +91,6 @@ const Upload = () => {
                 >
                     {message}
                 </p>
-            )}
-
-            <h3 style={{ color: "#4e54c8" }}>Uploaded Files</h3>
-            {uploadedFiles.length === 0 ? (
-                <p style={{ textAlign: "center" }}>No files uploaded yet.</p>
-            ) : (
-                <ul
-                    style={{
-                        listStyleType: "none",
-                        padding: "0",
-                        borderTop: "1px solid #ddd",
-                        marginTop: "10px",
-                    }}
-                >
-                    {uploadedFiles.map((file, index) => (
-                        <li
-                            key={index}
-                            style={{
-                                padding: "10px 0",
-                                borderBottom: "1px solid #ddd",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                            }}
-                        >
-                            <span>{file.filename}</span>
-                            <div>
-                                <a
-                                    href={`http://localhost:5000/files/${file.filename}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    style={{
-                                        textDecoration: "none",
-                                        color: "#4e54c8",
-                                        fontWeight: "bold",
-                                        marginRight: "10px",
-                                    }}
-                                >
-                                    Download
-                                </a>
-                                <button
-                                    onClick={() => handleDelete(file.filename)}
-                                    style={{
-                                        padding: "5px 10px",
-                                        backgroundColor: "#ff4d4d",
-                                        color: "#fff",
-                                        border: "none",
-                                        borderRadius: "5px",
-                                        cursor: "pointer",
-                                        fontWeight: "bold",
-                                    }}
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
             )}
         </div>
     );
