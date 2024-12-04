@@ -6,6 +6,7 @@ import Footer from "../components/footer";
 const Layout = () => {
     return (
         <div>
+
             <Header />
             <Nav />
             {/* Displaying a brief note about the project */}

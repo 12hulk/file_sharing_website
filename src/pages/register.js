@@ -30,7 +30,7 @@ const Register = () => {
         }
 
         try {
-            const response = await axios.post("http://localhost:5000/register", {
+            const response = await axios.post("https://backend-rust-theta-51.vercel.app/api/register.js", {
                 name: formData.name,
                 email: formData.email,
                 password: formData.password,

@@ -4,21 +4,20 @@ const { Pool } = require('pg');
 
 // Set up the connection pool using environment variables
 const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_DATABASE,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT,
+    user: "postgres.ekdoxzpypavhtoklntqv",            // Database user
+    host: "aws-0-ca-central-1.pooler.supabase.com",            // Database host (localhost or remote)
+    database: "postgres",    // Database name
+    password: "__prwwt1292",    // Database password
+    port: "6543",            // Database port
 });
 
-// Test the connection using async/await
-(async () => {
-    try {
-        await pool.connect();
+// Test the connection
+pool.connect()
+    .then(() => {
         console.log("Connected to PostgreSQL database!");
-    } catch (err) {
+    })
+    .catch(err => {
         console.error("Error connecting to PostgreSQL:", err);
-    }
-})();
+    });
 
 module.exports = pool;

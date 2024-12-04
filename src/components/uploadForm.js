@@ -10,7 +10,7 @@ const Upload = () => {
     useEffect(() => {
         const fetchFiles = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/files");
+                const response = await axios.get("https://backend-rust-theta-51.vercel.app/api/files.js");
                 setUploadedFiles(response.data);
             } catch (error) {
                 setMessage("Failed to load file list.");
