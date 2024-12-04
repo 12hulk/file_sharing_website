@@ -11,7 +11,8 @@ const Upload = () => {
         const fetchFiles = async () => {
             try {
                 const response = await axios.get("https://backend-rust-theta-51.vercel.app/api/files.js");
-                setUploadedFiles(response.data);
+                const files = Array.isArray(response.data) ? response.data : []; // Ensure the data is an array
+                setUploadedFiles(files);
             } catch (error) {
                 setMessage("Failed to load file list.");
                 console.error(error);
@@ -44,7 +45,8 @@ const Upload = () => {
 
             // Refresh file list
             const fileListResponse = await axios.get("https://backend-rust-theta-51.vercel.app/api/files.js");
-            setUploadedFiles(fileListResponse.data);
+            const files = Array.isArray(fileListResponse.data) ? fileListResponse.data : [];
+            setUploadedFiles(files);
         } catch (error) {
             setMessage("File upload failed.");
             console.error(error);
@@ -64,7 +66,8 @@ const Upload = () => {
 
             // Refresh file list
             const fileListResponse = await axios.get("http://localhost:5000/files");
-            setUploadedFiles(fileListResponse.data);
+            const files = Array.isArray(fileListResponse.data) ? fileListResponse.data : [];
+            setUploadedFiles(files);
         } catch (error) {
             setMessage("Failed to delete the file.");
             console.error(error);
