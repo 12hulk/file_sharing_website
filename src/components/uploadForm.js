@@ -5,6 +5,7 @@ const Upload = () => {
     const [file, setFile] = useState(null);
     const [message, setMessage] = useState("");
     const [isUploading, setIsUploading] = useState(false);
+    const [uploadedFiles, setUploadedFiles] = useState([]); // To store and display uploaded files
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
@@ -20,20 +21,26 @@ const Upload = () => {
 
         setIsUploading(true);
 
+        // Create a FormData object to send the file
+        const formData = new FormData();
+        formData.append("file", file);
+
         try {
             const response = await axios.post(
                 "https://backend-rust-theta-51.vercel.app/api/upload.js", // Use relative path to API endpoint
-                file,
+                formData,
                 {
                     headers: {
-                        "Content-Type": file.type,
-                        "file-name": file.name, // Send file name in headers
+                        "Content-Type": "multipart/form-data", // Important for sending files
+                        "file-name": file.name, // Send file name in headers (if needed)
                     },
                 }
             );
 
             if (response.status === 200) {
-                setMessage(`File uploaded successfully! Public URL: ${response.data.publicURL}`);
+                setMessage("File uploaded successfully!");
+                // Assuming the response contains an array of uploaded files
+                setUploadedFiles(response.data.files);
             } else {
                 setMessage("File upload failed. Please try again.");
             }
@@ -92,6 +99,30 @@ const Upload = () => {
                 >
                     {message}
                 </p>
+            )}
+
+            {/* Display the list of uploaded files */}
+            {uploadedFiles.length > 0 && (
+                <div style={{ marginTop: "20px" }}>
+                    <h3 style={{ textAlign: "center" }}>Uploaded Files:</h3>
+                    <ul style={{ listStyleType: "none", padding: 0 }}>
+                        {uploadedFiles.map((file, index) => (
+                            <li key={index} style={{ marginBottom: "10px" }}>
+                                <a
+                                    href={file.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                        color: "#4e54c8",
+                                        textDecoration: "underline",
+                                    }}
+                                >
+                                    {file.name}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             )}
         </div>
     );
