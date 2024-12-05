@@ -8,6 +8,7 @@ const Upload = () => {
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
+        setMessage("");
     };
 
     const handleSubmit = async (e) => {
@@ -17,31 +18,31 @@ const Upload = () => {
             return;
         }
 
-        const formData = new FormData();
-        formData.append("file", file);
         setIsUploading(true);
 
         try {
-            // Make sure this endpoint handles storing the file in your database
             const response = await axios.post(
-                "https://backend-rust-theta-51.vercel.app/api/upload.js", // Update with your correct API endpoint
-                formData,
+                "https://backend-rust-theta-51.vercel.app/api/upload.js", // Use relative path to API endpoint
+                file,
                 {
-                    headers: { "Content-Type": "multipart/form-data" },
+                    headers: {
+                        "Content-Type": file.type,
+                        "file-name": file.name, // Send file name in headers
+                    },
                 }
             );
 
-            if (response.data.success) {
-                setMessage("File uploaded successfully!");
+            if (response.status === 200) {
+                setMessage(`File uploaded successfully! Public URL: ${response.data.publicURL}`);
             } else {
                 setMessage("File upload failed. Please try again.");
             }
-            setFile(null);
         } catch (error) {
-            setMessage("File upload failed.");
-            console.error(error);
+            console.error("Upload Error:", error);
+            setMessage("File upload failed. Please try again.");
         } finally {
             setIsUploading(false);
+            setFile(null);
         }
     };
 
