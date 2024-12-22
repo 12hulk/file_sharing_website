@@ -12,7 +12,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('https://backend-rust-theta-51.vercel.app/api/login.js', {
+            const response = await axios.post('https://backend-file-hosting.vercel.app/api/login.js', {
                 email,
                 password,
             });
