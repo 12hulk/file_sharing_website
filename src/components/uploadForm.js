@@ -7,11 +7,13 @@ const Upload = () => {
     const [isUploading, setIsUploading] = useState(false);
     const [uploadedFiles, setUploadedFiles] = useState([]); // To store and display uploaded files
 
+    // Handle file change event
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
         setMessage("");
     };
 
+    // Handle file upload
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!file) {
@@ -27,7 +29,7 @@ const Upload = () => {
 
         try {
             const response = await axios.post(
-                "https://backend-file-hosting.vercel.app/api/upload.js", // Use relative path to API endpoint
+                "https://backend-file-hosting.vercel.app/api/upload.js", // API endpoint
                 formData,
                 {
                     headers: {
@@ -56,11 +58,12 @@ const Upload = () => {
         }
     };
 
+    // Handle file deletion
     const handleDelete = async (filename) => {
         try {
             const response = await axios.delete(
-                "https://backend-file-hosting.vercel.app/api/upload.js",
-                { data: { filename } }
+                "https://backend-file-hosting.vercel.app/api/upload.js", // API endpoint
+                { data: { filename } } // Pass filename in the body for deletion
             );
 
             if (response.status === 200) {
@@ -75,8 +78,10 @@ const Upload = () => {
         }
     };
 
+    // Handle file download
     const handleDownload = (url) => {
-        window.open(url, "_blank");
+        console.log("Download URL:", url);
+        window.open(url, "_blank"); // Open the file URL in a new tab
     };
 
     return (
