@@ -75,10 +75,10 @@ const Upload = () => {
         }
     };
 
-    const handleDownload = (url, filename) => {
+    const handleDownload = (publicURL, filename) => {
         // Create a hidden link element to trigger the download
         const a = document.createElement("a");
-        a.href = url; // Set the file URL
+        a.href = publicURL; // Set the file URL
         a.download = filename; // Set the filename for the download
         a.click(); // Programmatically click the link to trigger the download
     };
@@ -101,7 +101,7 @@ const Upload = () => {
                         {uploadedFiles.map((file) => (
                             <li key={file.name}>
                                 {/* Instead of opening a new tab, we download the file directly */}
-                                <button onClick={() => handleDownload(file.url, file.name)}>
+                                <button onClick={() => handleDownload(file.publicURL, file.name)}>
                                     Download {file.name}
                                 </button>
                                 <button onClick={() => handleDelete(file.name)}>
