@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const Upload = () => {
+const Upload = (email) => {
     const [file, setFile] = useState(null);
     const [message, setMessage] = useState("");
     const [isUploading, setIsUploading] = useState(false);
@@ -24,6 +24,7 @@ const Upload = () => {
         // Create a FormData object to send the file
         const formData = new FormData();
         formData.append("file", file);
+        formData.append("email", email);
 
         try {
             const response = await axios.post(
@@ -101,9 +102,7 @@ const Upload = () => {
                         {uploadedFiles.map((file) => (
                             <li key={file.name}>
                                 {/* Instead of opening a new tab, we download the file directly */}
-                                <button onClick={() => handleDownload(file.publicURL, file.name)}>
-                                    Download {file.name}
-                                </button>
+
                                 <button onClick={() => handleDelete(file.name)}>
                                     Delete
                                 </button>

@@ -57,7 +57,7 @@ const Home = () => {
                 Logout
             </button>
 
-            <Upload />
+            <Upload email={Session.get("email")} />
             <Footer />
         </div>
     );
