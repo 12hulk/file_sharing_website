@@ -96,10 +96,10 @@ const Upload = (email) => {
             return;
         }
 
-        const publicURL = data;
+        const publicURL = data.publicUrl;
         console.log("Public URL:", publicURL); // Log the correct URL
-        const publicURLString = JSON.stringify(data);
-        window.open(publicURLString, '_blank');
+
+        window.open(publicURL, '_blank');
     };
 
 
