@@ -99,7 +99,7 @@ const Upload = (email) => {
         const publicURL = data;
         console.log("Public URL:", publicURL); // Log the correct URL
 
-        window.open(fileUrl, '_blank');
+        window.open(publicURL, '_blank');
     };
 
 
