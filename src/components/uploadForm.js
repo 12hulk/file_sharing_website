@@ -79,10 +79,7 @@ const Upload = () => {
         // Create a hidden link element to trigger the download
         console.log(publicURL);
 
-        const a = document.createElement("a");
-        a.href = publicURL; // Set the file URL
-        a.download = filename; // Set the filename for the download
-        a.click(); // Programmatically click the link to trigger the download
+
     };
 
     return (
