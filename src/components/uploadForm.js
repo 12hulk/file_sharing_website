@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-
+import { createClient } from '@supabase/supabase-js';
 const Upload = (email) => {
     const [file, setFile] = useState(null);
     const [message, setMessage] = useState("");
@@ -76,7 +76,15 @@ const Upload = (email) => {
         }
     };
 
-    const handleDownload = (publicURL, filename) => {
+    const handleDownload = (filename) => {
+        const supabase = createClient(
+            "https://ekdoxzpypavhtoklntqv.supabase.co",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVrZG94enB5cGF2aHRva2xudHF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMwNzQ3NDAsImV4cCI6MjA0ODY1MDc0MH0.FyHH1ee-dfBThvAUeL4SaqCO6sJZzQ-2Scnnv-bInOA"
+        );
+        const { publicURL } = supabase.storage
+            .from('uploads')
+            .getPublicUrl(fileName);
+        console.log(publicURL);
         // Create a hidden link element to trigger the download
         const a = document.createElement("a");
         a.href = publicURL; // Set the file URL
@@ -102,7 +110,7 @@ const Upload = (email) => {
                         {uploadedFiles.map((file) => (
                             <li key={file.name}>
                                 {/* Instead of opening a new tab, we download the file directly */}
-                                <button onClick={() => handleDownload(file.publicURL, file.name)}>
+                                <button onClick={() => handleDownload(file.name)}>
                                     Download {file.name}
                                 </button>
                                 <button onClick={() => handleDelete(file.name)}>
