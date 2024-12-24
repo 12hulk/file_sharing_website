@@ -76,22 +76,36 @@ const Upload = (email) => {
         }
     };
 
-    const handleDownload = (filename) => {
-        const fileName = filename;
+    const handleDownload = async (filename) => {
         const supabase = createClient(
             "https://ekdoxzpypavhtoklntqv.supabase.co",
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVrZG94enB5cGF2aHRva2xudHF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMwNzQ3NDAsImV4cCI6MjA0ODY1MDc0MH0.FyHH1ee-dfBThvAUeL4SaqCO6sJZzQ-2Scnnv-bInOA"
         );
-        const { publicURL } = supabase.storage
-            .from('uploads')
-            .getPublicUrl(fileName);
-        console.log(publicURL);
+
+        // Fetch public URL for the file
+        const { data, error } = supabase.storage.from('uploads').getPublicUrl(filename);
+
+        if (error) {
+            console.error("Error fetching public URL:", error.message);
+            return;
+        }
+
+        const publicURL = data?.publicURL; // Access public URL if it exists
+
+        if (!publicURL) {
+            console.error("No public URL returned for file:", filename);
+            return;
+        }
+
+        console.log("Public URL:", publicURL); // Log the correct URL
+
         // Create a hidden link element to trigger the download
         const a = document.createElement("a");
         a.href = publicURL; // Set the file URL
         a.download = filename; // Set the filename for the download
         a.click(); // Programmatically click the link to trigger the download
     };
+
 
     return (
         <div>
