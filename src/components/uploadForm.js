@@ -99,12 +99,7 @@ const Upload = (email) => {
         const publicURL = data;
         console.log("Public URL:", publicURL); // Log the correct URL
 
-        // Create a hidden link element to trigger the download
-        const a = document.createElement("a");
-        a.href = publicURL; // Set the file URL
-        a.download = filename; // Set the filename for the download
-        a.setAttribute("download", filename);
-        a.click(); // Programmatically click the link to trigger the download
+        window.open(fileUrl, '_blank');
     };
 
 
