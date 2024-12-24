@@ -1,30 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import Session from 'react-session-api';
+
 const Upload = () => {
     const [file, setFile] = useState(null);
     const [message, setMessage] = useState("");
     const [isUploading, setIsUploading] = useState(false);
-    const [uploadedFiles, setUploadedFiles] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchUploadedFiles = async () => {
-            setIsLoading(true);
-            try {
-                const response = await axios.get(
-                    "https://backend-file-hosting.vercel.app/api/getFiles.js"
-                );
-                setUploadedFiles(response.data.files || []); // Fallback if `files` is undefined
-            } catch (error) {
-                console.error("Error fetching files:", error);
-                setMessage("Failed to fetch uploaded files.");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchUploadedFiles();
-    }, []);
+    const [uploadedFiles, setUploadedFiles] = useState([]); // To store and display uploaded files
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
@@ -40,19 +21,25 @@ const Upload = () => {
 
         setIsUploading(true);
 
+        // Create a FormData object to send the file
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("email", Session.get("email"));
 
         try {
             const response = await axios.post(
-                "https://backend-file-hosting.vercel.app/api/upload.js",
+                "https://backend-file-hosting.vercel.app/api/upload.js", // Use relative path to API endpoint
                 formData,
-                { headers: { "Content-Type": "multipart/form-data" } }
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data", // Important for sending files
+                        "file-name": file.name, // Send file name in headers (if needed)
+                    },
+                }
             );
 
             if (response.status === 200) {
                 setMessage("File uploaded successfully!");
+                // Assuming the response contains the file's public URL
                 setUploadedFiles((prev) => [
                     ...prev,
                     { name: file.name, url: response.data.publicURL },
@@ -72,12 +59,12 @@ const Upload = () => {
     const handleDelete = async (filename) => {
         try {
             const response = await axios.delete(
-                "https://backend-file-hosting.vercel.app/api/delete.js",
+                "https://backend-file-hosting.vercel.app/api/upload.js",
                 { data: { filename } }
             );
 
             if (response.status === 200) {
-                setUploadedFiles((prev) => prev.filter((file) => file.name !== filename));
+                setUploadedFiles(uploadedFiles.filter((file) => file.name !== filename));
                 setMessage("File deleted successfully!");
             } else {
                 setMessage("File deletion failed.");
@@ -88,26 +75,17 @@ const Upload = () => {
         }
     };
 
-    const handleDownload = async (url, filename) => {
-        try {
-            const response = await axios.get(url, {
-                responseType: "blob",
-            });
-
-            const link = document.createElement("a");
-            link.href = window.URL.createObjectURL(new Blob([response.data]));
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-        } catch (error) {
-            console.error("Download Error:", error);
-            setMessage("File download failed.");
-        }
+    const handleDownload = (publicURL, filename) => {
+        // Create a hidden link element to trigger the download
+        const a = document.createElement("a");
+        a.href = publicURL; // Set the file URL
+        a.download = filename; // Set the filename for the download
+        a.click(); // Programmatically click the link to trigger the download
     };
 
     return (
         <div>
+            {/* Upload Form */}
             <form onSubmit={handleSubmit}>
                 <input type="file" onChange={handleFileChange} />
                 <button type="submit" disabled={isUploading}>
@@ -116,23 +94,24 @@ const Upload = () => {
             </form>
             <p>{message}</p>
 
-            {isLoading ? (
-                <p>Loading files...</p>
-            ) : uploadedFiles.length > 0 ? (
-                <ul>
-                    {uploadedFiles.map((file) => (
-                        <li key={file.name}>
-                            <span>{file.name}</span>
-                            <button onClick={() => handleDownload(file.url, file.name)}>
-                                Download
-                            </button>
-                            <button onClick={() => handleDelete(file.name)}>Delete</button>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p>No files uploaded yet.</p>
-            )}
+            {/* Display uploaded files */}
+            <div>
+                {uploadedFiles.length > 0 && (
+                    <ul>
+                        {uploadedFiles.map((file) => (
+                            <li key={file.name}>
+                                {/* Instead of opening a new tab, we download the file directly */}
+                                <button onClick={() => handleDownload(file.publicURL, file.name)}>
+                                    Download {file.name}
+                                </button>
+                                <button onClick={() => handleDelete(file.name)}>
+                                    Delete
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
         </div>
     );
 };
