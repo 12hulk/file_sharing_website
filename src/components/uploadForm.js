@@ -103,6 +103,7 @@ const Upload = (email) => {
         const a = document.createElement("a");
         a.href = publicURL; // Set the file URL
         a.download = filename; // Set the filename for the download
+        a.setAttribute("download", filename);
         a.click(); // Programmatically click the link to trigger the download
     };
 
