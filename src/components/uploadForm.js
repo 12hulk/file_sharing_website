@@ -91,12 +91,12 @@ const Upload = (email) => {
         }
 
         // Ensure the file exists in the storage bucket before proceeding
-        if (!data) {
+        if (!data || !data.publicURL) {
             console.error(`No public URL returned for file: ${filename}. The file might not exist in the bucket.`);
             return;
         }
 
-        const publicURL = data;
+        const publicURL = data.publicURL;  // Correctly accessing the public URL
         console.log("Public URL:", publicURL); // Log the correct URL
 
         // Create a hidden link element to trigger the download
