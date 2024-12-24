@@ -5,19 +5,22 @@ const Upload = () => {
     const [file, setFile] = useState(null);
     const [message, setMessage] = useState("");
     const [isUploading, setIsUploading] = useState(false);
-    const [uploadedFiles, setUploadedFiles] = useState([]); // To store and display uploaded files
+    const [uploadedFiles, setUploadedFiles] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // Fetch uploaded files when the component mounts
     useEffect(() => {
         const fetchUploadedFiles = async () => {
+            setIsLoading(true);
             try {
                 const response = await axios.get(
                     "https://backend-file-hosting.vercel.app/api/getFiles.js"
                 );
-                setUploadedFiles(response.data.files); // Assuming the API returns a list of files
+                setUploadedFiles(response.data.files || []); // Fallback if `files` is undefined
             } catch (error) {
                 console.error("Error fetching files:", error);
                 setMessage("Failed to fetch uploaded files.");
+            } finally {
+                setIsLoading(false);
             }
         };
         fetchUploadedFiles();
@@ -37,7 +40,6 @@ const Upload = () => {
 
         setIsUploading(true);
 
-        // Create a FormData object to send the file
         const formData = new FormData();
         formData.append("file", file);
 
@@ -45,11 +47,7 @@ const Upload = () => {
             const response = await axios.post(
                 "https://backend-file-hosting.vercel.app/api/upload.js",
                 formData,
-                {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                }
+                { headers: { "Content-Type": "multipart/form-data" } }
             );
 
             if (response.status === 200) {
@@ -95,7 +93,6 @@ const Upload = () => {
                 responseType: "blob",
             });
 
-            // Create a link element to trigger the download
             const link = document.createElement("a");
             link.href = window.URL.createObjectURL(new Blob([response.data]));
             link.download = filename;
@@ -110,7 +107,6 @@ const Upload = () => {
 
     return (
         <div>
-            {/* Upload Form */}
             <form onSubmit={handleSubmit}>
                 <input type="file" onChange={handleFileChange} />
                 <button type="submit" disabled={isUploading}>
@@ -119,24 +115,23 @@ const Upload = () => {
             </form>
             <p>{message}</p>
 
-            {/* Display uploaded files */}
-            <div>
-                {uploadedFiles.length > 0 && (
-                    <ul>
-                        {uploadedFiles.map((file) => (
-                            <li key={file.name}>
-                                <span>{file.name}</span>
-                                <button onClick={() => handleDownload(file.url, file.name)}>
-                                    Download
-                                </button>
-                                <button onClick={() => handleDelete(file.name)}>
-                                    Delete
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </div>
+            {isLoading ? (
+                <p>Loading files...</p>
+            ) : uploadedFiles.length > 0 ? (
+                <ul>
+                    {uploadedFiles.map((file) => (
+                        <li key={file.name}>
+                            <span>{file.name}</span>
+                            <button onClick={() => handleDownload(file.url, file.name)}>
+                                Download
+                            </button>
+                            <button onClick={() => handleDelete(file.name)}>Delete</button>
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p>No files uploaded yet.</p>
+            )}
         </div>
     );
 };
