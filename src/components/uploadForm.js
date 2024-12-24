@@ -102,9 +102,11 @@ const Upload = (email) => {
                         {uploadedFiles.map((file) => (
                             <li key={file.name}>
                                 {/* Instead of opening a new tab, we download the file directly */}
-
+                                <button onClick={() => handleDownload(file.publicURL, file.name)}>
+                                    Download {file.name}
+                                </button>
                                 <button onClick={() => handleDelete(file.name)}>
-                                    Delete
+                                    Delete:{file.name}
                                 </button>
                             </li>
                         ))}
