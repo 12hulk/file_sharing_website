@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import Session from 'react-session-api';
 const Upload = () => {
     const [file, setFile] = useState(null);
     const [message, setMessage] = useState("");
@@ -42,6 +42,7 @@ const Upload = () => {
 
         const formData = new FormData();
         formData.append("file", file);
+        formData.append("email", Session.get("email"));
 
         try {
             const response = await axios.post(
