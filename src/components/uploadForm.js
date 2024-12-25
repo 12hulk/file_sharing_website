@@ -98,14 +98,8 @@ const Upload = (email) => {
 
         const publicURL = data.publicUrl;
         console.log("Public URL:", publicURL); // Log the correct URL
-        const link = document.createElement("a");
-        link.href = publicURL; // Set the public URL as the link's href
-        link.download = filename; // Set the desired file name
-        link.target = "_blank"; // Optional: open in a new tab/window
-        link.rel = "noopener noreferrer"; // Optional security measure
-        document.body.appendChild(link); // Add the link to the DOM
-        link.click(); // Programmatically click the link to trigger the download
-        document.body.removeChild(link); // Remove the link after clicking
+
+        window.open(publicURL, '_blank');
     };
 
 
