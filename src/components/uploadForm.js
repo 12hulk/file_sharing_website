@@ -34,6 +34,7 @@ const Upload = (userEmail) => {
                     headers: {
                         "Content-Type": "multipart/form-data", // Important for sending files
                         "file-name": file.name, // Send file name in headers (if needed)
+                        "userEmail": userEmail,
                     },
                 }
             );
