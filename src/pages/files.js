@@ -1,32 +1,34 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Session from 'react-session-api'; // Importing react-session-api
+import Session from "react-session-api"; // Importing react-session-api
 
-const Files = async () => {
-
+const Files = () => {
     const [data, setFiles] = useState([]);
     const [message, setMessage] = useState("");
-    {
+    const userEmail = Session.get("userEmail"); // Get user email from session
 
-        try {
-            // Make a GET request to fetch files for the logged-in user
-            const response = await axios.get(
-                'https://backend-file-hosting.vercel.app/api/files.js', // Your API endpoint
-                { params: Session.get("userEmail") } // Pass email as a query parameter
-            );
+    useEffect(() => {
+        const fetchFiles = async () => {
+            try {
+                // Make a GET request to fetch files for the logged-in user
+                const response = await axios.get(
+                    "https://backend-file-hosting.vercel.app/api/files.js", // Your API endpoint
+                    { params: { userEmail } } // Pass email as a query parameter
+                );
 
-            if (response.status === 200) {
-                setFiles(response.data.data || []); // Set files from response
-            } else {
-                setMessage("Failed to fetch files.");
+                if (response.status === 200) {
+                    setFiles(response.data.data || []); // Set files from response
+                } else {
+                    setMessage("Failed to fetch files.");
+                }
+            } catch (error) {
+                console.error("Error fetching files:", error);
+                setMessage("Error fetching files. Please try again.");
             }
-        } catch (error) {
-            console.error("Error fetching files:", error);
-            setMessage("Error fetching files. Please try again.");
-        }
-    };
+        };
 
-
+        fetchFiles();
+    }, [userEmail]); // Dependency on userEmail to re-fetch when it changes
 
     const handleDownload = async (fileUrl, fileName) => {
         try {
@@ -51,7 +53,7 @@ const Files = async () => {
             );
 
             if (response.status === 200) {
-                setUploadedFiles(uploadedFiles.filter((file) => file.name !== filename));
+                setFiles(data.filter((file) => file.file_name !== filename)); // Filter out the deleted file
                 setMessage("File deleted successfully!");
             } else {
                 setMessage("File deletion failed.");
@@ -62,31 +64,31 @@ const Files = async () => {
         }
     };
 
-
     return (
         <div>
-            <h2>Your previous Files</h2>
-
-            if( data.length) {
+            <h2>Your Previous Files</h2>
+            {data.length > 0 ? (
                 <ul>
-                    {data.map((data) => (
-                        <li key={data.id}>
-                            <span>{data.file_name}</span>
+                    {data.map((file) => (
+                        <li key={file.id}>
+                            <span>{file.file_name}</span>
                             <button
-                                onClick={() => handleDownload(data.file_url, data.file_name)}
+                                onClick={() => handleDownload(file.file_url, file.file_name)}
                             >
                                 Download
                             </button>
-                            <button onClick={() => handleDelete(data.file_name)}>
+                            <button onClick={() => handleDelete(file.file_name)}>
                                 Delete
                             </button>
                         </li>
                     ))}
-                </ul>}
-            else {
+                </ul>
+            ) : (
                 <p>No files found for this account.</p>
-            }
+            )}
+            {message && <p>{message}</p>} {/* Show message if exists */}
         </div>
     );
 };
+
 export default Files;
