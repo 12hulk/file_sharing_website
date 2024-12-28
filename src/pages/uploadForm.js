@@ -46,11 +46,11 @@ const Upload = (userEmail) => {
                 // Assuming the response contains the file's public URL
                 setUploadedFiles((prev) => [
                     ...prev,
-                    { name: file.name, url: response.data.publicURL },
+                    { name: file.name, url: response.data.data1 },
                 ]);
                 console.log("File Name:", response.data.fields);
                 console.log("File Name:", response.data.fileName);
-                console.log("Public URL:", response.data.publicURL);
+                console.log("Public URL:", response.data.data1);
                 console.log("User Email:", response.data.userEmail);
                 const supabase = createClient(
                     "https://ekdoxzpypavhtoklntqv.supabase.co",
