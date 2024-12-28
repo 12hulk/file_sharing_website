@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { data } from "react-router-dom";
 
 const Files = ({ userEmail }) => {
     const [files, setFiles] = useState([]);
@@ -17,7 +18,7 @@ const Files = ({ userEmail }) => {
                 );
 
                 if (response.status === 200) {
-                    setFiles(response.data.files || []); // Set files from response
+                    setFiles(response.data.data || []); // Set files from response
                 } else {
                     setMessage("Failed to fetch files.");
                 }
@@ -75,17 +76,17 @@ const Files = ({ userEmail }) => {
             {message && <p>{message}</p>}
             {isLoading ? (
                 <p>Loading your files...</p>
-            ) : files.length > 0 ? (
+            ) : data.length > 0 ? (
                 <ul>
-                    {files.map((file) => (
-                        <li key={file.id}>
-                            <span>{file.file_name}</span>
+                    {data.map((data) => (
+                        <li key={data.id}>
+                            <span>{data.file_name}</span>
                             <button
-                                onClick={() => handleDownload(file.file_url, file.file_name)}
+                                onClick={() => handleDownload(data.file_url, data.file_name)}
                             >
                                 Download
                             </button>
-                            <button onClick={() => handleDelete(file.file_name)}>
+                            <button onClick={() => handleDelete(data.file_name)}>
                                 Delete
                             </button>
                         </li>
