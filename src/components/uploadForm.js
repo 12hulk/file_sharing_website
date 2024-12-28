@@ -46,6 +46,7 @@ const Upload = (userEmail) => {
                     ...prev,
                     { name: file.name, url: response.data.publicURL },
                 ]);
+                console.log("File Name:", response.data.fields);
                 console.log("File Name:", response.data.fileName);
                 console.log("Public URL:", response.data.publicURL);
                 console.log("User Email:", response.data.userEmail);
