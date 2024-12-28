@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Session from 'react-session-api'; // Importing react-session-api
 
-const Files = () => {
+const Files = async () => {
     const [data, setFiles] = useState([]);
     const [message, setMessage] = useState("");
 
