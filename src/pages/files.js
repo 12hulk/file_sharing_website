@@ -3,7 +3,7 @@ import axios from "axios";
 import { data } from "react-router-dom";
 
 const Files = ({ userEmail }) => {
-    const [files, setFiles] = useState([]);
+    const [data, setFiles] = useState([]);
     const [message, setMessage] = useState("");
     const [isLoading, setIsLoading] = useState(true);
 
@@ -72,7 +72,7 @@ const Files = ({ userEmail }) => {
 
     return (
         <div>
-            <h2>Your Files</h2>
+            <h2>Your previous Files</h2>
             {message && <p>{message}</p>}
             {isLoading ? (
                 <p>Loading your files...</p>
