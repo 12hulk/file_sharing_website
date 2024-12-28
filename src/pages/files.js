@@ -13,7 +13,7 @@ const Files = ({ userEmail }) => {
                 // Make a GET request to fetch files for the logged-in user
                 const response = await axios.get(
                     'https://backend-file-hosting.vercel.app/api/files.js', // Your API endpoint
-                    { params: { userEmail } } // Pass email as a query parameter
+                    { params: Session.get("userEmail") } // Pass email as a query parameter
                 );
 
                 if (response.status === 200) {

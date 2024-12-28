@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Upload from '../components/uploadForm';
+import Upload from './uploadForm';
 import Footer from '../components/footer';
 import Session from 'react-session-api'; // Importing react-session-api
 import Files from './files';
@@ -57,8 +57,8 @@ const Home = () => {
                 Logout
             </button>
 
-            <Upload userEmail={Session.get("userEmail")} />
-            <Files userEmail={Session.get("userEmail")} />
+            <Upload />
+            <Files />
             <Footer />
         </div>
     );

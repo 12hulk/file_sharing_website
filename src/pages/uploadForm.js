@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { createClient } from '@supabase/supabase-js';
+import Session from 'react-session-api'; // Importing react-session-api
+
 const Upload = (userEmail) => {
     const [file, setFile] = useState(null);
     const [message, setMessage] = useState("");
@@ -24,7 +26,7 @@ const Upload = (userEmail) => {
         // Create a FormData object to send the file
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("userEmail", userEmail);
+        formData.append("userEmail", Session.get("userEmail"));
 
         try {
             const response = await axios.post(
