@@ -62,7 +62,7 @@ const Upload = (userEmail) => {
                     .insert({
                         user_email: response.data.userEmail,
                         file_name: response.data.fileName,
-                        file_url: response.data.publicURL,
+                        file_url: response.data.url,
                         uploaded_at: new Date(),
                     });
 
