@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { createClient } from '@supabase/supabase-js';
-const Upload = (email) => {
+const Upload = (userEmail) => {
     const [file, setFile] = useState(null);
     const [message, setMessage] = useState("");
     const [isUploading, setIsUploading] = useState(false);
@@ -24,7 +24,7 @@ const Upload = (email) => {
         // Create a FormData object to send the file
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("email", email);
+        formData.append("userEmail", userEmail);
 
         try {
             const response = await axios.post(
@@ -61,7 +61,7 @@ const Upload = (email) => {
         try {
             const response = await axios.delete(
                 "https://backend-file-hosting.vercel.app/api/upload.js",
-                { data: { filename } }
+                { data: { filename, userEmail } }
             );
 
             if (response.status === 200) {

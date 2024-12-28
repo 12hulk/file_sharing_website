@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Upload from '../components/uploadForm';
 import Footer from '../components/footer';
 import Session from 'react-session-api'; // Importing react-session-api
-
+import Files from './files';
 const Home = () => {
     const navigate = useNavigate();
 
@@ -57,7 +57,8 @@ const Home = () => {
                 Logout
             </button>
 
-            <Upload email={Session.get("email")} />
+            <Upload userEmail={Session.get("userEmail")} />
+            <Files userEmail={Session.get("userEmail")} />
             <Footer />
         </div>
     );
