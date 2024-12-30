@@ -3,21 +3,27 @@ import axios from "axios";
 import Session from "react-session-api"; // Importing react-session-api
 
 const Files = () => {
-    const [data, setFiles] = useState([]);
-    const [message, setMessage] = useState("");
+    const [data, setFiles] = useState([]); // State to hold files
+    const [message, setMessage] = useState(""); // State for error or success messages
     const userEmail = Session.get("email"); // Get user email from session
 
+    // Fetch files on component mount or when userEmail changes
     useEffect(() => {
         const fetchFiles = async () => {
+            if (!userEmail) {
+                setMessage("Please log in to view your files.");
+                return;
+            }
+
             try {
                 // Make a GET request to fetch files for the logged-in user
                 const response = await axios.get(
-                    "https://backend-file-hosting.vercel.app/api/files.js", // Your API endpoint
+                    "https://backend-file-hosting.vercel.app/api/files.js", // Your API endpoint for fetching files
                     { params: { userEmail } } // Pass email as a query parameter
                 );
 
                 if (response.status === 200) {
-                    setFiles(response.data.data || []); // Set files from response
+                    setFiles(response.data.files || []); // Set files from the response
                 } else {
                     setMessage("Failed to fetch files.");
                 }
@@ -28,7 +34,7 @@ const Files = () => {
         };
 
         fetchFiles();
-    }, [userEmail]); // Dependency on userEmail to re-fetch when it changes
+    }, [userEmail]); // Re-fetch files when the userEmail changes
 
     const handleDownload = async (fileUrl, fileName) => {
         try {
@@ -48,12 +54,12 @@ const Files = () => {
     const handleDelete = async (filename) => {
         try {
             const response = await axios.delete(
-                "https://backend-file-hosting.vercel.app/api/upload.js",
+                "https://backend-file-hosting.vercel.app/api/upload.js", // Endpoint for file deletion
                 { data: { filename, userEmail } }
             );
 
             if (response.status === 200) {
-                setFiles(data.filter((file) => file.file_name !== filename)); // Filter out the deleted file
+                setFiles(data.filter((file) => file.file_name !== filename)); // Remove deleted file from the UI
                 setMessage("File deleted successfully!");
             } else {
                 setMessage("File deletion failed.");
@@ -67,10 +73,14 @@ const Files = () => {
     return (
         <div>
             <h2>Your Previous Files</h2>
-            {data.length > 0 ? (
+            {message && <p>{message}</p>} {/* Display any messages */}
+
+            {data.length === 0 ? (
+                <p>No files available. Please upload some files.</p>
+            ) : (
                 <ul>
                     {data.map((file) => (
-                        <li key={file.id}>
+                        <li key={file.file_name}>
                             <span>{file.file_name}</span>
                             <button
                                 onClick={() => handleDownload(file.file_url, file.file_name)}
@@ -83,10 +93,7 @@ const Files = () => {
                         </li>
                     ))}
                 </ul>
-            ) : (
-                <p>No files found for this account.</p>
             )}
-            {message && <p>{message}</p>} {/* Show message if exists */}
         </div>
     );
 };
