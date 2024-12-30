@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { createClient } from '@supabase/supabase-js';
-import Session from 'react-session-api'; // Importing react-session-api
+import Session from 'react-session-api';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Make sure you import Bootstrap styles
 
-const Upload = (userEmail) => {
+const Upload = () => {
     const [file, setFile] = useState(null);
     const [message, setMessage] = useState("");
     const [isUploading, setIsUploading] = useState(false);
-    const [uploadedFiles, setUploadedFiles] = useState([]); // To store and display uploaded files
+    const [uploadedFiles, setUploadedFiles] = useState([]);
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
@@ -22,20 +23,18 @@ const Upload = (userEmail) => {
         }
 
         setIsUploading(true);
-
-        // Create a FormData object to send the file
         const formData = new FormData();
         formData.append("file", file);
         formData.append("userEmail", Session.get("email"));
 
         try {
             const response = await axios.post(
-                "https://backend-file-hosting.vercel.app/api/upload.js", // Use relative path to API endpoint
+                "https://backend-file-hosting.vercel.app/api/upload.js",
                 formData,
                 {
                     headers: {
-                        "Content-Type": "multipart/form-data", // Important for sending files
-                        "file-name": file.name, // Send file name in headers (if needed)
+                        "Content-Type": "multipart/form-data",
+                        "file-name": file.name,
                         "userEmail": Session.get("email"),
                     },
                 }
@@ -43,33 +42,10 @@ const Upload = (userEmail) => {
 
             if (response.status === 200) {
                 setMessage("File uploaded successfully!");
-                // Assuming the response contains the file's public URL
                 setUploadedFiles((prev) => [
                     ...prev,
                     { name: file.name, url: response.data.fileUrl },
                 ]);
-                console.log("File Name:", response.data.fields);
-                console.log("File Name:", response.data.fileName);
-                console.log("Public URL:", response.data.fileUrl);
-                console.log("User Email:", response.data.userEmail);
-                const supabase = createClient(
-                    "https://ekdoxzpypavhtoklntqv.supabase.co",
-                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVrZG94enB5cGF2aHRva2xudHF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMwNzQ3NDAsImV4cCI6MjA0ODY1MDc0MH0.FyHH1ee-dfBThvAUeL4SaqCO6sJZzQ-2Scnnv-bInOA"
-                );
-                // Insert file metadata into the 'files' table
-                const { error } = await supabase
-                    .from('files')
-                    .insert({
-                        user_email: response.data.userEmail,
-                        file_name: response.data.fileName,
-                        file_url: response.data.fileUrl,
-                        uploaded_at: new Date(),
-                    });
-                if (error) {
-                    console.error('Error inserting into files table:', error.message);
-                    return res.status(500).json({ error: error.message });
-                }
-
             } else {
                 setMessage("File upload failed. Please try again.");
             }
@@ -86,7 +62,7 @@ const Upload = (userEmail) => {
         try {
             const response = await axios.delete(
                 "https://backend-file-hosting.vercel.app/api/upload.js",
-                { data: { filename, userEmail } }
+                { data: { filename, userEmail: Session.get("email") } }
             );
 
             if (response.status === 200) {
@@ -107,68 +83,87 @@ const Upload = (userEmail) => {
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVrZG94enB5cGF2aHRva2xudHF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMwNzQ3NDAsImV4cCI6MjA0ODY1MDc0MH0.FyHH1ee-dfBThvAUeL4SaqCO6sJZzQ-2Scnnv-bInOA"
         );
 
-        // Fetch public URL for the file
         const { data, error } = supabase.storage.from('uploads').getPublicUrl(filename);
 
-        if (error) {
-            console.error("Error fetching public URL:", error.message);
-            return;
-        }
-
-        // Ensure the file exists in the storage bucket before proceeding
-        if (!data) {
-            console.error(`No public URL returned for file: ${filename}. The file might not exist in the bucket.`);
+        if (error || !data) {
+            console.error("Error fetching public URL:", error?.message || "File not found");
             return;
         }
 
         const publicURL = data.publicUrl;
-        console.log("Public URL:", publicURL); // Log the correct URL
 
         try {
-            // Fetch the file data from the file URL and create a download link
             const response = await axios.get(publicURL, { responseType: "blob" });
             const blob = new Blob([response.data]);
             const link = document.createElement("a");
             link.href = window.URL.createObjectURL(blob);
             link.download = filename;
-            link.click(); // Trigger the download
+            link.click();
         } catch (error) {
             console.error("Error downloading file:", error);
             setMessage("Error downloading file. Please try again.");
         }
     };
 
-
     return (
-        <div>
+        <div className="container my-5">
+            <h2 className="text-center mb-4">File Upload</h2>
+
             {/* Upload Form */}
-            <form onSubmit={handleSubmit}>
-                <input type="file" onChange={handleFileChange} />
-                <button type="submit" disabled={isUploading}>
+            <form onSubmit={handleSubmit} className="mb-4">
+                <div className="mb-3">
+                    <input
+                        type="file"
+                        onChange={handleFileChange}
+                        className="form-control"
+                    />
+                </div>
+                <button
+                    type="submit"
+                    className="btn btn-primary w-100"
+                    disabled={isUploading}
+                >
                     {isUploading ? "Uploading..." : "Upload File"}
                 </button>
             </form>
-            <p>{message}</p>
 
-            {/* Display uploaded files */}
-            <p>Recently uploaded files :
+            {/* Message */}
+            {message && (
+                <div className="alert alert-info text-center" role="alert">
+                    {message}
+                </div>
+            )}
 
-            </p>
+            {/* Display Uploaded Files */}
             <div>
-                {uploadedFiles.length > 0 && (
-                    <ul>
+                <h4>Recently Uploaded Files:</h4>
+                {uploadedFiles.length > 0 ? (
+                    <ul className="list-group">
                         {uploadedFiles.map((file) => (
-                            <li key={file.name}>
-                                {/* Instead of opening a new tab, we download the file directly */}
-                                <button onClick={() => handleDownload(file.name)}>
-                                    Download {file.name}
-                                </button>
-                                <button onClick={() => handleDelete(file.name)}>
-                                    Delete:{file.name}
-                                </button>
+                            <li
+                                key={file.name}
+                                className="list-group-item d-flex justify-content-between align-items-center"
+                            >
+                                <span>{file.name}</span>
+                                <div>
+                                    <button
+                                        className="btn btn-success btn-sm me-2"
+                                        onClick={() => handleDownload(file.name)}
+                                    >
+                                        Download
+                                    </button>
+                                    <button
+                                        className="btn btn-danger btn-sm"
+                                        onClick={() => handleDelete(file.name)}
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
                             </li>
                         ))}
                     </ul>
+                ) : (
+                    <p className="text-center">No files uploaded yet.</p>
                 )}
             </div>
         </div>
