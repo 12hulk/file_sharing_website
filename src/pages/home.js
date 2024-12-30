@@ -21,6 +21,8 @@ const Home = () => {
 
         // Set session to "no" to mark the user as logged out
         Session.set("isAuthenticated", "no");
+        Session.clear(); // Clear react-session-api
+        localStorage.removeItem('email'); // Remove email from localStorage
 
         // Redirect to login page after logging out
         navigate('/login');

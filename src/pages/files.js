@@ -7,8 +7,7 @@ const Files = () => {
     const [data, setFiles] = useState([]); // State to hold files
     const [message, setMessage] = useState(""); // State for error or success messages
     const [isLoading, setIsLoading] = useState(true); // State to track loading
-    const userEmail = Session.get("email"); // Get user email from session
-
+    const userEmail = localStorage.getItem('email') || Session.get("email"); // Load from localStorage if available
     // Fetch files on component mount or when userEmail changes
     useEffect(() => {
         const fetchFiles = async () => {
@@ -74,7 +73,10 @@ const Files = () => {
             setMessage("File deletion failed.");
         }
     };
-
+    // Save email to localStorage if it's not already there
+    if (userEmail && !localStorage.getItem('email')) {
+        localStorage.setItem('email', userEmail); // Persist email
+    }
     return (
         <div className="container my-5">
             <h2 className="text-center mb-4">Your Previous Files</h2>
