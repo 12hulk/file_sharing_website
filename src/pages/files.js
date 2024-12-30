@@ -5,7 +5,7 @@ import Session from "react-session-api"; // Importing react-session-api
 const Files = () => {
     const [data, setFiles] = useState([]);
     const [message, setMessage] = useState("");
-    const userEmail = Session.get("userEmail"); // Get user email from session
+    const userEmail = Session.get("email"); // Get user email from session
 
     useEffect(() => {
         const fetchFiles = async () => {
