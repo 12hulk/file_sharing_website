@@ -52,7 +52,23 @@ const Upload = (userEmail) => {
                 console.log("File Name:", response.data.fileName);
                 console.log("Public URL:", response.data.fileUrl);
                 console.log("User Email:", response.data.userEmail);
-
+                const supabase = createClient(
+                    "https://ekdoxzpypavhtoklntqv.supabase.co",
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVrZG94enB5cGF2aHRva2xudHF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMwNzQ3NDAsImV4cCI6MjA0ODY1MDc0MH0.FyHH1ee-dfBThvAUeL4SaqCO6sJZzQ-2Scnnv-bInOA"
+                );
+                // Insert file metadata into the 'files' table
+                const { error } = await supabase
+                    .from('files')
+                    .insert({
+                        user_email: response.data.userEmail,
+                        file_name: response.data.fileName,
+                        file_url: response.data.fileUrl,
+                        uploaded_at: new Date(),
+                    });
+                if (error) {
+                    console.error('Error inserting into files table:', error.message);
+                    return res.status(500).json({ error: error.message });
+                }
 
             } else {
                 setMessage("File upload failed. Please try again.");
