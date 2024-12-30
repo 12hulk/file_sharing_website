@@ -17,9 +17,10 @@ const Login = () => {
                 password,
             });
             Session.set("email", email);
+
             if (response.status === 200 && response.data.token === "yes") {
                 console.log('Login successful:', response.data);
-
+                localStorage.setItem("email", email); // Persist email in localStorage
                 // Set session storage with react-session-api
                 Session.set("isAuthenticated", response.data.token);
 
