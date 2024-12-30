@@ -26,7 +26,7 @@ const Upload = (userEmail) => {
         // Create a FormData object to send the file
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("userEmail", Session.get("userEmail"));
+        formData.append("userEmail", Session.get("email"));
 
         try {
             const response = await axios.post(
@@ -36,7 +36,7 @@ const Upload = (userEmail) => {
                     headers: {
                         "Content-Type": "multipart/form-data", // Important for sending files
                         "file-name": file.name, // Send file name in headers (if needed)
-                        "userEmail": Session.get("userEmail"),
+                        "userEmail": Session.get("email"),
                     },
                 }
             );
