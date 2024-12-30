@@ -124,7 +124,18 @@ const Upload = (userEmail) => {
         const publicURL = data.publicUrl;
         console.log("Public URL:", publicURL); // Log the correct URL
 
-        window.open(publicURL, '_blank');
+        try {
+            // Fetch the file data from the file URL and create a download link
+            const response = await axios.get(publicURL, { responseType: "blob" });
+            const blob = new Blob([response.data]);
+            const link = document.createElement("a");
+            link.href = window.URL.createObjectURL(blob);
+            link.download = filename;
+            link.click(); // Trigger the download
+        } catch (error) {
+            console.error("Error downloading file:", error);
+            setMessage("Error downloading file. Please try again.");
+        }
     };
 
 
