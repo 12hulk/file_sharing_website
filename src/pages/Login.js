@@ -26,9 +26,9 @@ const Login = ({ history }) => {
 
                 console.log(Session.get("isAuthenticated"));
                 // Optionally, redirect to a different page after login
-                history.push("/home"); // Redirect to files page
+                //   history.push("/home"); // Redirect to files page
                 // Redirect to home page after successful login
-                //navigate('/home');
+                navigate('/home');
             }
         } catch (err) {
             console.error('Error during login:', err.response?.data || err.message);
