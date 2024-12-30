@@ -22,9 +22,10 @@ const Login = () => {
 
                 // Set session storage with react-session-api
                 Session.set("isAuthenticated", response.data.token);
+                Session.set("id", response.data.id);
 
                 console.log(Session.get("isAuthenticated"));
-
+                console.log(Session.get("id"));
                 // Redirect to home page after successful login
                 navigate('/home');
             }

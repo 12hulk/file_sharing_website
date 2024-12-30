@@ -64,6 +64,7 @@ const Upload = (userEmail) => {
                         file_name: response.data.fileName,
                         file_url: response.data.fileUrl,
                         uploaded_at: new Date(),
+                        unique_id: Session.get("id")
                     });
                 if (error) {
                     console.error('Error inserting into files table:', error.message);
