@@ -151,6 +151,9 @@ const Upload = (userEmail) => {
             <p>{message}</p>
 
             {/* Display uploaded files */}
+            <p>Recently uploaded files :
+
+            </p>
             <div>
                 {uploadedFiles.length > 0 && (
                     <ul>
