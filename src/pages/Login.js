@@ -16,16 +16,15 @@ const Login = () => {
                 email,
                 password,
             });
-            Session.set("userEmail", email);
+            Session.set("email", email);
             if (response.status === 200 && response.data.token === "yes") {
                 console.log('Login successful:', response.data);
 
                 // Set session storage with react-session-api
                 Session.set("isAuthenticated", response.data.token);
-                Session.set("id", response.data.id);
 
                 console.log(Session.get("isAuthenticated"));
-                console.log(Session.get("id"));
+
                 // Redirect to home page after successful login
                 navigate('/home');
             }
