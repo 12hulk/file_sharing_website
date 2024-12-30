@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Session from 'react-session-api'; // Importing react-session-api
 
-const Login = () => {
+const Login = ({ history }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -25,9 +25,10 @@ const Login = () => {
                 Session.set("isAuthenticated", response.data.token);
 
                 console.log(Session.get("isAuthenticated"));
-
+                // Optionally, redirect to a different page after login
+                history.push("/home"); // Redirect to files page
                 // Redirect to home page after successful login
-                navigate('/home');
+                //navigate('/home');
             }
         } catch (err) {
             console.error('Error during login:', err.response?.data || err.message);
